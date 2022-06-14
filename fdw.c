@@ -25,7 +25,7 @@ static unsigned long get_file_mod(const char *filePath)
         exit(1);
     }
 
-    return fileStats.st_mtime;
+    return fileStats.st_size;
 }
 
 static unsigned long get_file_mod_from_dir(const char *dirPath)
@@ -79,11 +79,13 @@ void watch_dir(const char *dirPath, void (*callbackFunction)())
 
     for (;;)
     {
+        system("sfeed_update 1> /dev/null");
         unsigned long fileMod = get_file_mod_from_dir(dirPath);
         if (lastMod < fileMod)
         {
             callbackFunction();
             lastMod = fileMod;
         }
+        sleep(1);
     }
 }
