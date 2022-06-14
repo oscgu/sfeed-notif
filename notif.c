@@ -13,7 +13,8 @@
 // #define DEBUG
 
 /* function implementations */
-static unsigned long get_color_from_hex(char *hexcol, Display *display)
+static unsigned long
+get_color_from_hex(char *hexcol, Display *display)
 {
     XColor xcol;
     XParseColor(display, DefaultColormap(display, 0), hexcol, &xcol);
@@ -22,14 +23,16 @@ static unsigned long get_color_from_hex(char *hexcol, Display *display)
     return xcol.pixel;
 }
 
-static void destroy_notif(Notif *notif)
+static void
+destroy_notif(Notif *notif)
 {
     XFlush(notif->display);
     XCloseDisplay(notif->display);
     free(notif);
 }
 
-void show_notif(Notif *notif, const NotifPosition *notifpos, const char *title)
+void
+show_notif(Notif *notif, const NotifPosition *notifpos, const char *title)
 {
     XEvent event;
     #ifdef DEBUG
@@ -77,7 +80,8 @@ die:
 }
 
 
-Notif *create_notif(char *message, NotifGeometry *notifGeometry, NotifColors *notifColors)
+Notif *
+create_notif(char *message, NotifGeometry *notifGeometry, NotifColors *notifColors)
 {
     Display *display = XOpenDisplay(NULL);
     if (display == NULL) 

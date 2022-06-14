@@ -5,7 +5,8 @@
 #include <string.h>
 
 
-static void func_wrapper()
+static void
+func_wrapper()
 {
     NotifGeometry notifGeometry = { .border = 2, .height = 50, .width = 400, .insideX = 10, .insideY = 27 };
     char msg[MAX_MESSAGE_LEN(2, 400, 10, 13)] = "New rss feeds";

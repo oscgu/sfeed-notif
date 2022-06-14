@@ -5,7 +5,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-static unsigned long get_file_size(const char *filePath)
+static unsigned long
+get_file_size(const char *filePath)
 {
     struct stat fileStats;
 
@@ -19,7 +20,8 @@ static unsigned long get_file_size(const char *filePath)
     return fileStats.st_size;
 }
 
-static unsigned long get_dir_size(const char *dirPath)
+static unsigned long
+get_dir_size(const char *dirPath)
 {
     unsigned long dirSize = 0;
     struct dirent *dir;
@@ -43,7 +45,8 @@ static unsigned long get_dir_size(const char *dirPath)
     return dirSize;
 }
 
-void watch_dir(const char *dirPath, void (*callbackFunction)())
+void
+watch_dir(const char *dirPath, void (*callbackFunction)())
 {
     unsigned long lastDirSize = get_dir_size(dirPath);
 
