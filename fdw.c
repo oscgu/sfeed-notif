@@ -40,7 +40,6 @@ static unsigned long get_dir_size(const char *dirPath)
     }
 
     closedir(d);
-    printf("%lu\n", dirSize);
     return dirSize;
 }
 
