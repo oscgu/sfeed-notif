@@ -5,16 +5,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-static char *construct_fulldir(const char *dir, const char *file)
-{
-    char *temp = malloc((strlen(dir) + strlen(file) + 1) * sizeof(char));
-    strcpy(temp, dir);
-    strcat(temp, file);
-
-    return temp;
-}
-
-static unsigned long get_file_mod(const char *filePath)
+static unsigned long get_file_size(const char *filePath)
 {
     struct stat fileStats;
 
@@ -28,9 +19,9 @@ static unsigned long get_file_mod(const char *filePath)
     return fileStats.st_size;
 }
 
-static unsigned long get_file_mod_from_dir(const char *dirPath)
+static unsigned long get_dir_size(const char *dirPath)
 {
-    unsigned long lastMod = 0;
+    unsigned long dirSize = 0;
     struct dirent *dir;
 
     DIR *d = opendir(dirPath);
@@ -41,50 +32,29 @@ static unsigned long get_file_mod_from_dir(const char *dirPath)
 
     while ((dir = readdir(d)) != NULL)
     {
-        unsigned long fileMod;
-        char *fullDir = construct_fulldir(dirPath, dir->d_name);
-        fileMod = get_file_mod(fullDir);
+        char fullDir[256];
+        strcpy(fullDir, dirPath);
+        strcat(fullDir, dir->d_name);
 
-        if (lastMod < fileMod)
-        {
-            lastMod = fileMod;
-        }
-        free(fullDir);
+        dirSize += get_file_size(fullDir);
     }
 
     closedir(d);
-    return lastMod;
-}
-
-
-void watch_file(const char *filePath, void (*callbackfunction)())
-{
-    unsigned long lastMod = get_file_mod(filePath);
-
-    for (;;)
-    {
-        unsigned long fileMod = get_file_mod(filePath);
-        if (lastMod < fileMod)
-        {
-            callbackfunction();
-            lastMod = fileMod;
-        }
-        sleep(1);
-    }
+    printf("%lu\n", dirSize);
+    return dirSize;
 }
 
 void watch_dir(const char *dirPath, void (*callbackFunction)())
 {
-    unsigned long lastMod = get_file_mod_from_dir(dirPath);
+    unsigned long lastDirSize = get_dir_size(dirPath);
 
     for (;;)
     {
-        system("sfeed_update 1> /dev/null");
-        unsigned long fileMod = get_file_mod_from_dir(dirPath);
-        if (lastMod < fileMod)
+        unsigned long dirSize = get_dir_size(dirPath);
+        if (lastDirSize < dirSize)
         {
             callbackFunction();
-            lastMod = fileMod;
+            lastDirSize = dirSize;
         }
         sleep(1);
     }
